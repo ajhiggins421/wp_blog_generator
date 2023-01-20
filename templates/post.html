@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Wordpress Blog Generator</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static',filename='assets/favicon.jpg') }}" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{{ url_for('static',filename='/styles.css') }}" rel="stylesheet" />
+        {{ ckeditor.load() }}
+    </head>
+
+    <body id="page-top">
+
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('home') + '#page-top'}}"><img src="{{ url_for('static',filename='assets/img/navbar-logo.jpg') }}" alt="..." /></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars ms-1"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('generate')}}">Generate</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('view_posts')}}">View</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('post')}}">Create</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <section class="page-section bg-light" id="model-section">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase">Wordpress Blog Generator</h2>
+                    <h3 class="section-subheading text-muted">Use {} for ChatGPT</h3>
+                </div>
+                <div class="model-form">
+                    <form method="post" >
+                        <label for="blog-title">Title:</label>
+                        <input type="text" id="blog-title" name="blog-title" value = "{{blog_title}}">
+                        <label for="blog-date">Date:</label>
+                        <input type="date" id="blog-date" name="blog-date"
+                           value="{{blog_date}}">
+                        <hr>
+                        <div class="model-form mb-4">
+                                <input type="radio" class="btn-check" name="status" id="publish" value="publish" autocomplete="off"  {% if status=='publish' %} checked {% endif %}>
+                                <label class="btn btn-secondary" for="publish">Publish</label>
+
+                                <input type="radio" class="btn-check" name="status" id="draft" value="draft" autocomplete="off" {% if status != 'publish' %} checked {% endif %}>
+                                <label class="btn btn-secondary" for="draft" >Draft</label>
+                        </div>
+
+                        {% if post_id  %}
+
+                            <a class="btn btn-primary" href="{{ url_for('delete', post_id=post_id) }}">Delete</a>
+
+                        {% endif %}
+
+                        {{ ckeditor.create(value = article_body) }}
+                        <div class="submit text-center">
+                            <button class="btn btn-primary btn-xl text-uppercase" id="generateButton" name="action" value="Generate" type="submit">
+                                Generate
+                            </button>
+                            <button class="btn btn-primary btn-xl text-uppercase" id="postButton" name="action" value="Post" type="submit">
+                                Post
+                            </button>
+                        </div>
+                </form>
+                </div>
+
+            </div>
+        </section>
+        <!-- Footer-->
+        <footer class="footer py-4">
+
+        </footer>
+        <script src="" async defer></script>
+    </body>
+</html>
+
