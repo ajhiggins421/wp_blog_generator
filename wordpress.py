@@ -16,17 +16,19 @@ class Wordpress:
 
     def fetch_posts(self):
         posts_list = []
-        posts = requests.get(self.url + "?status=draft,publish", headers=self.header).json()
+        posts = requests.get(self.url + "?status=draft,publish&per_page=100&orderby=id",
+                             headers=self.header).json()
         for post in posts:
             new_dict = {k: v for k, v in dict(post).items() if k in {'id', 'date', 'status'}}
-            new_dict["title"] = BeautifulSoup(dict(post)["title"]["rendered"]).get_text("\n")
-            new_dict["content"] = BeautifulSoup(dict(post)["content"]["rendered"]).get_text("\n")
+            new_dict["title"] = dict(post)["title"]["rendered"]
+            new_dict["content"] = dict(post)["content"]["rendered"]
             posts_list.append(new_dict)
         return posts_list
 
     def fetch_posts_no_content(self):
         posts_list = []
-        posts = requests.get(self.url + "?status=draft,publish", headers=self.header).json()
+        posts = requests.get(self.url + "?status=draft,publish&per_page=100&orderby=id",
+                             headers=self.header).json()
         for post in posts:
             new_dict = {k: v for k, v in dict(post).items() if k in {'id', 'date', 'status'}}
             new_dict["title"] = BeautifulSoup(dict(post)["title"]["rendered"]).get_text("\n")
@@ -34,7 +36,8 @@ class Wordpress:
         return posts_list
 
     def fetch_posts_full(self):
-        return requests.get(self.url, headers=self.header).json()
+        return requests.get(self.url + "?status=draft,publish&per_page=100&orderby=id",
+                            headers=self.header).json()
 
     def create_post(self, title, content, date, status="draft", categories=1):
         # Sample date: '2020-01-05T10:00:00'
@@ -56,8 +59,8 @@ class Wordpress:
             post["date"]: date
         if status:
             post["status"]: status
-        print(status)
-        return requests.post(self.url + str(post_id), headers=self.header, json=post)
+        req = requests.post(self.url + str(post_id), headers=self.header, json=post)
+        return req
 
     def delete_post(self, post_id):
         return requests.delete(self.url + str(post_id), headers=self.header)
