@@ -10,32 +10,29 @@
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="{{ url_for('static',filename='assets/favicon.jpg') }}" />
         <!-- Font Awesome icons (free version)-->
-        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
-        <!-- Google fonts-->
-        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
-        <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
         <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="{{ url_for('static',filename='/styles.css') }}" rel="stylesheet" />
+        <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         {{ ckeditor.load() }}
     </head>
 
     <body id="page-top">
 
-        <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url_for('home') + '#page-top'}}"><img src="{{ url_for('static',filename='assets/img/navbar-logo.jpg') }}" alt="..." /></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                    Menu
-                    <i class="fas fa-bars ms-1"></i>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('generate')}}">Generate</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('view_posts')}}">View</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('post')}}">Create</a></li>
-                    </ul>
-                </div>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+          <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav">
+
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('generate')}}">Generate</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('view_posts')}}">View</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('post')}}">Create</a></li>
+              </ul>
             </div>
+          </div>
         </nav>
         <section class="page-section bg-light" id="model-section">
             <div class="container">
@@ -51,12 +48,12 @@
                         <input type="date" id="blog-date" name="blog-date"
                            value="{{blog_date}}">
                         <hr>
-                        <div class="model-form mb-4">
-                                <input type="radio" class="btn-check" name="status" id="publish" value="publish" autocomplete="off"  {% if status=='publish' %} checked {% endif %}>
-                                <label class="btn btn-secondary" for="publish">Publish</label>
+                        <div class="model-form mb-4 d-flex justify-content-center">
+                                <input type="radio" class="btn-check" name="status" id="publish" value="publish" autocomplete="off">
+                                <label class="btn btn-primary" for="publish">Publish</label>
 
-                                <input type="radio" class="btn-check" name="status" id="draft" value="draft" autocomplete="off" {% if status != 'publish' %} checked {% endif %}>
-                                <label class="btn btn-secondary" for="draft" >Draft</label>
+                                <input type="radio" class="btn-check" name="status" id="draft" value="draft" autocomplete="off" checked>
+                                <label class="btn btn-primary" for="draft" >Draft</label>
                         </div>
 
                         {% if post_id  %}

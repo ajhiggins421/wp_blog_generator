@@ -20,5 +20,6 @@ class ChatGPT:
 
     def get_response(self, prompt):
         answer = self.bot.ask(prompt, conversation_id=None, parent_id=None)
+        print(answer)
         return answer['message']
 
