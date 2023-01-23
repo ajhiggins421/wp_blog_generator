@@ -48,7 +48,10 @@ class Wordpress:
             'categories': categories,  # category ID
             'date': date
         }
-        return requests.post(self.url, headers=self.header, json=post)
+        req = requests.post(self.url, headers=self.header, json=post)
+        print(req)
+        print(req.text)
+        return req
 
     def update_post(self, title, content, post_id, date=None, status=None):
         post = {

@@ -1,15 +1,6 @@
 from revChatGPT.ChatGPT import Chatbot
 
 
-# You can specify custom conversation and parent ids. Otherwise it uses the saved conversation (yes. conversations
-# are automatically saved)
-
-# {
-#   "message": message,
-#   "conversation_id": self.conversation_id,
-#   "parent_id": self.parent_id,
-# }
-
 class ChatGPT:
 
     def __init__(self, token):
@@ -20,6 +11,5 @@ class ChatGPT:
 
     def get_response(self, prompt):
         answer = self.bot.ask(prompt, conversation_id=None, parent_id=None)
-        print(answer)
         return answer['message']
 

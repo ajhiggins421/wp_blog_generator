@@ -1,16 +1,13 @@
-from threading import Thread
-from time import sleep
-
 from wordpress import Wordpress
 from chat_gpt import ChatGPT
+from generator import Generator
+
 from flask import Flask, request, render_template, redirect, url_for
 from flask_ckeditor import CKEditor
 from bs4 import BeautifulSoup
 
 import utils
 import creds
-from utils import random_date
-
 
 app = Flask(__name__)
 ckeditor = CKEditor(app)
@@ -18,28 +15,7 @@ ckeditor = CKEditor(app)
 wp = Wordpress(creds.url, creds.user, creds.password)
 chat_gpt_client = ChatGPT(creds.chat_gpt_token)
 
-
-def auto_generate(*prompts):
-    incomplete = [prompt for prompt in prompts]
-
-    while len(incomplete) > 0:
-        for prompt in incomplete:
-            try:
-                title = prompt
-                date = random_date(creds.date_bound)
-                print(f"Generating blog for prompt: {title}")
-                text = chat_gpt_client.get_response(f"Write the content for an article with the title: {prompt}. Use "
-                                                    f"html syntax to format the blog. Do not include a title.")
-                print("Done Generated")
-                resp = wp.create_post(title, text, date, status="draft")
-                print(str(resp))
-                if str(resp).split("[")[1][0] == "2":
-                    incomplete.remove(prompt)
-                print(f"Incomplete: {incomplete}")
-                sleep(60)
-            except Exception as e:
-                print(e)
-                sleep(60)
+generator = Generator(wp, chat_gpt_client)
 
 
 @app.route('/view-posts')
@@ -55,11 +31,8 @@ def generate():
         soup = BeautifulSoup(data)
         data = soup.get_text("\n")
         titles = [title.strip() for title in data.split("&&")]
-
-        thread = Thread(target=auto_generate, args=titles)
-        thread.start()
-        return render_template('generate.html', article_body="Posts are being generated. DO NOT use generator until "
-                                                             "these are complete")
+        generator.add_prompts(titles)
+        return render_template('generate.html', article_body="Posts are being generated.")
 
     return render_template('generate.html')
 
@@ -85,20 +58,26 @@ def post(post_id):
             title = request.form["blog-title"]
             date = request.form["blog-date"]
             status = request.form.get("status")
-            data = chat_gpt_client.get_response(f"Command: {command}. Use html to format the post. Do not include a "
-                                                f"title.\nText: {text}")
+            data = generator.edit(command, text)
             return render_template('post.html', article_body=data, blog_title=title, blog_date=date, status=status)
 
         elif request.form['action'] == "Post":
             title = request.form["blog-title"]
             date = request.form["blog-date"]
-            date += f'T{utils.random_time(creds.date_bound)}'
             status = request.form.get("status")
+
+            if date.strip() == "":
+                date = utils.random_day(creds.date_bound)
+            date += f'T{utils.random_time(creds.date_bound)}'
+
+            if title.strip() == "" and text.strip() == "":
+                return redirect(url_for("view_posts"))
+
             if post_id:
                 wp.update_post(title, text, post_id, date, status)
-
             else:
                 wp.create_post(title, text, date, status)
+
             return redirect(url_for("view_posts"))
 
     if not post_id:
@@ -121,8 +100,6 @@ def delete(post_id):
 @app.route('/', methods=["GET", "POST"])
 def home():
     return redirect(url_for("generate"))
-    # items = db_helper.fetch_todo()
-    # return render_template("index.html", items=items)
 
 
 if __name__ == "__main__":

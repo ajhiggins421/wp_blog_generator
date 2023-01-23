@@ -7,3 +7,7 @@ def random_date(date_bound):
 
 def random_time(date_bound):
     return str(radar.random_datetime(start=date_bound[0], stop=date_bound[1])).split(" ")[1]
+
+
+def random_day(date_bound):
+    return str(radar.random_datetime(start=date_bound[0], stop=date_bound[1])).split(" ")[0]
